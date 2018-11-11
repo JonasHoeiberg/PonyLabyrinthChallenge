@@ -1,0 +1,29 @@
+.MazeVisualization {
+    border: black solid 1px;
+    position: relative;
+}
+
+.MazeCell {
+    border: black none 1px;
+    position: absolute;
+}
+
+.MazeCell.W {
+    border-left: solid;
+}
+
+.MazeCell.N {
+    border-top: solid;
+}
+
+.MazeCell.Pony {
+    background-color: pink;
+}
+
+.MazeCell.Domokun {
+    background-color: gray;
+}
+
+.MazeCell.End {
+    background-color: green;
+}
