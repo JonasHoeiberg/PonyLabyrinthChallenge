@@ -3,7 +3,7 @@ import './App.css';
 import {LabyrinthParameters} from "./components/labyrinthParameters";
 import {Labyrinth} from "./components/labyrinth";
 import {LabyrinthControls} from "./components/labyrinthControls";
-import {kebabToCamel} from "./util";
+import {kebabToCamel, Graph} from "./util";
 
 //This is sort of acting as the model/synchronizer/central piece. If this grows beyond a fun little experiment, proper MVC separation would be preferable.
 
@@ -11,6 +11,8 @@ class App extends Component {
     state = {
         labyrinthState: null
     };
+
+    graph = null;
 
     async fetchMaze(maze_id) {
         const mazeRequest = new Request(
@@ -32,6 +34,8 @@ class App extends Component {
         const mazeData = await mazeResponse.json();
 
         this.setState({labyrinthState: Object.assign({}, kebabToCamel(mazeData))});
+
+        this.generateGraph();
     }
 
     async makeMove(direction) {
@@ -59,6 +63,10 @@ class App extends Component {
         }
 
         this.fetchMaze(this.state.labyrinthState.maze_id.toString());
+    }
+
+    generateGraph() {
+        this.graph = Graph.fromMaze(this.state.labyrinthState.size[0],this.state.labyrinthState.size[1],this.state.labyrinthState.data);
     }
 
     render() {
