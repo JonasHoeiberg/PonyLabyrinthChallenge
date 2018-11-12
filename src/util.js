@@ -1,4 +1,5 @@
 //React doesn't like kebaab case, and the API uses it, so I made this. Doesn't catch numbers and stuff in variable names, but doesn;t need to for now
+//No camels were hurt in the making of this function
 export function camelToKebab(object) {
     let newObject = Object.keys(object).reduce((accObject, currentPropertyName) => {
         let words = currentPropertyName.match(/(^[^A-Z]+)|([A-Z][^A-Z]+)/g);
@@ -66,12 +67,31 @@ export class Graph {
 
     };
 
-    static fromMaze(height, width, mazeData) {
+    static fromMaze(maze) {
+        const width = maze.size[0];
+        const height = maze.size[1];
+        const mazeData = maze.data;
+        const pony = maze.pony[0];
+        const domokun = maze.domokun[0];
+        const endPoint = maze.endPoint[0];
+
         let graph = new Graph();
 
         graph.nodes = mazeData.map(cell => new GraphNode());
 
         graph.nodes.forEach((node, index) => {
+            node.properties = [];
+
+            if (index === pony) {
+                node.properties.push("pony");
+            }
+            if (index === domokun) {
+                node.properties.push("domokun");
+            }
+            if (index === endPoint) {
+                node.properties.push("endPoint");
+            }
+
             //MAze specifies where WE DO NOT have a connection, so start by inserting all connections
             if (graph.nodes[index - 1] != null) {
                 let west = {
@@ -102,6 +122,8 @@ export class Graph {
                     label: "north",
                     node: graph.nodes[index - width]
                 };
+
+                node.edges.push(north);
             }
         });
 

@@ -9,6 +9,9 @@ import {kebabToCamel, Graph} from "./util";
 
 class App extends Component {
     state = {
+        mazeHeight: null,
+        mazeWidth: null,
+        maze_id: null,
         labyrinthState: null
     };
 
@@ -33,17 +36,22 @@ class App extends Component {
 
         const mazeData = await mazeResponse.json();
 
-        this.setState({labyrinthState: Object.assign({}, kebabToCamel(mazeData))});
+        let graph = this.generateGraph(kebabToCamel(mazeData));
 
-        this.generateGraph();
+        this.setState({
+            mazeWidth: mazeData.size[0],
+            mazeHeight: mazeData.size[1],
+            maze_id: mazeData.maze_id,
+            labyrinthState: Object.assign({}, graph)
+        });
     }
 
     async makeMove(direction) {
-        if (this.state.labyrinthState == null || this.state.labyrinthState.maze_id == null)
+        if (this.state.labyrinthState == null || this.state.maze_id == null)
             return;
 
         const moveRequest = new Request(
-            "https://ponychallenge.trustpilot.com/pony-challenge/maze/" + this.state.labyrinthState.maze_id.toString(),
+            "https://ponychallenge.trustpilot.com/pony-challenge/maze/" + this.state.maze_id.toString(),
             {
                 method: "POST",
                 headers: {
@@ -62,20 +70,26 @@ class App extends Component {
             throw new Error("Couldn't make move");
         }
 
-        this.fetchMaze(this.state.labyrinthState.maze_id.toString());
+        this.fetchMaze(this.state.maze_id.toString());
     }
 
-    generateGraph() {
-        this.graph = Graph.fromMaze(this.state.labyrinthState.size[0],this.state.labyrinthState.size[1],this.state.labyrinthState.data);
+    generateGraph(maze) {
+        return Graph.fromMaze(maze);
     }
 
     render() {
+        let currentNode = null;
+
+        if (this.state.labyrinthState != null) {
+            currentNode = this.state.labyrinthState.nodes.find(item => item.properties.indexOf("pony") !== -1);
+        }
+
         return (
             <div className="App">
                 <header className="App-header">
                     <LabyrinthParameters generateMaze={(maze_id) => this.fetchMaze(maze_id)} />
-                    <Labyrinth mazeData={this.state.labyrinthState} />
-                    <LabyrinthControls makeMove={(direction) => this.makeMove(direction)} />
+                    <Labyrinth maze={this.state.labyrinthState} width={this.state.mazeWidth} height={this.state.mazeHeight} />
+                    <LabyrinthControls currentNode={currentNode} makeMove={(direction) => this.makeMove(direction)} />
                 </header>
             </div>
         );

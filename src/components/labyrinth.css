@@ -4,16 +4,24 @@
 }
 
 .MazeCell {
-    border: black none 1px;
+    border: black solid 1px;
     position: absolute;
 }
 
 .MazeCell.W {
-    border-left: solid;
+    border-left: none;
 }
 
 .MazeCell.N {
-    border-top: solid;
+    border-top: none;
+}
+
+.MazeCell.E {
+    border-right: none;
+}
+
+.MazeCell.S {
+    border-bottom: none;
 }
 
 .MazeCell.Pony {

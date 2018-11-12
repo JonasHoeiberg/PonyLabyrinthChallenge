@@ -14,17 +14,19 @@ export class Labyrinth extends Component {
         //Normally I'd use an iterator, reducer or foreach, but given the nature of the data, I opted for x and y loops
         for (let y = 0; y < this.width; y++) {
             for (let x = 0; x < this.height; x++) {
-                if (this.props.mazeData.endPoint[0] === x + (this.width * y)) {
-                    cellElements.push(this.renderEndPointCell(x, y, this.props.mazeData.data[x + (this.width * y)]));
+                let node = this.props.maze.nodes[x + (this.width * y)];
+
+                if (node.properties.indexOf("endPoint") !== -1) {
+                    cellElements.push(this.renderEndPointCell(x, y, node));
                 }
-                else if (this.props.mazeData.pony[0] === x + (this.width * y)) {
-                    cellElements.push(this.renderPonyCell(x, y, this.props.mazeData.data[x + (this.width * y)]));
+                else if (node.properties.indexOf("pony") !== -1) {
+                    cellElements.push(this.renderPonyCell(x, y, node));
                 }
-                else if (this.props.mazeData.domokun[0] === x + (this.width * y)) {
-                    cellElements.push(this.renderDomokunCell(x, y, this.props.mazeData.data[x + (this.width * y)]));
+                else if (node.properties.indexOf("domokun") !== -1) {
+                    cellElements.push(this.renderDomokunCell(x, y, node));
                 }
                 else {
-                    cellElements.push(this.renderBasicCell(x, y, this.props.mazeData.data[x + (this.width * y)]));
+                    cellElements.push(this.renderBasicCell(x, y, node));
                 }
             }
         }
@@ -33,27 +35,42 @@ export class Labyrinth extends Component {
     }
 
     //These are separate functions just to remind myself that someday they should be their own components.
-    renderPonyCell(x, y, cellWalls) {
-        return this.renderBasicCell(x, y, cellWalls, "Pony");
+    renderPonyCell(x, y, node) {
+        return this.renderBasicCell(x, y, node, "Pony");
     }
 
-    renderDomokunCell(x, y, cellWalls) {
-        return this.renderBasicCell(x, y, cellWalls, "Domokun");
+    renderDomokunCell(x, y, node) {
+        return this.renderBasicCell(x, y, node, "Domokun");
     }
 
-    renderEndPointCell(x, y, cellWalls) {
-        return this.renderBasicCell(x, y, cellWalls, "End");
+    renderEndPointCell(x, y, node) {
+        return this.renderBasicCell(x, y, node, "End");
     }
 
-    renderBasicCell(x, y, cellWalls, additionalClasses) {
+    renderBasicCell(x, y, node, additionalClasses) {
+        let nodeWidth = this.cellWidth;
+        let nodeHeight = this.cellWidth;
+
         let classNames = [];
-        cellWalls.forEach(item => {
-            switch (item) {
+        node.edges.forEach(item => {
+            switch (item.label) {
                 case "north":
                     classNames.push("N");
+                    nodeHeight++;
                     break;
                 case "west":
                     classNames.push("W");
+                    nodeWidth++;
+                    break;
+                case "east":
+                    classNames.push("E");
+                    nodeWidth++;
+                    break;
+                case "south":
+                    classNames.push("S");
+                    nodeHeight++;
+                    break;
+                default:
                     break;
             }
         });
@@ -63,8 +80,8 @@ export class Labyrinth extends Component {
         }, "MazeCell");
 
         let style = {
-            width: this.cellWidth.toString() + "px",
-            height: this.cellWidth.toString() + "px",
+            width: nodeWidth.toString() + "px",
+            height: nodeHeight.toString() + "px",
             left: x*this.cellWidth.toString() + "px",
             top: y*this.cellWidth.toString() + "px"
         };
@@ -84,12 +101,12 @@ export class Labyrinth extends Component {
     }
 
     render() {
-        if (this.props.mazeData == null) {
+        if (this.props.maze == null) {
             return (<div></div>);
         }
 
-        this.width = this.props.mazeData.size[0];
-        this.height = this.props.mazeData.size[1];
+        this.width = this.props.width;
+        this.height = this.props.height;
 
         return (
             <div className="MazeVisualization" style={this.getContainerStyle()}>
