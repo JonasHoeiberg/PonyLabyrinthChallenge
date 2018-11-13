@@ -47,6 +47,46 @@ export function kebabToCamel(object) {
     return Object.assign({}, newObject);
 }
 
+//Basic queue for BFS
+export class Queue {
+    static TOP_MAX = 100;
+
+    constructor(initialCollection) {
+        if (Array.isArray(initialCollection)) {
+            this.values = initialCollection;
+        }
+    }
+
+    values = [];
+    top = 0;
+    get length() {return this.values.length - this.top;}
+    get empty() {return this.length === 0;}
+
+    dequeue() {
+        const val = this.values[this.top];
+
+        if (val == null) {
+            return null;
+        }
+
+        this.top++;
+
+        //We don't want to do this every time we dequeue, due to performance.
+        if (this.top > Queue.TOP_MAX) {
+            this.values = this.values.splice(this.top);
+            this.top = 0;
+        }
+
+        return val;
+    }
+
+    enqueue(val) {
+        this.values.push(val);
+    }
+
+    [Symbol.iterator]() {return this.values;}
+}
+
 //Abstract graph class
 export class GraphEdge {
     label = null;
@@ -56,16 +96,71 @@ export class GraphEdge {
 export class GraphNode {
     edges = [];
     properties = [];
-    color = false;
+    parentNode = null;
+    parentEdge = null;
+}
+
+//BFS implementation
+export function shortestPath(graph, startNode, endNode, validNode) {
+    if (validNode != null && typeof validNode !== "function") {
+        throw new Error("validNode must be null or a function");
+    }
+
+    startNode.parentNode = -1;
+    startNode.parentEdge = -1;
+
+    let nodeQ = new Queue();
+
+    nodeQ.enqueue(startNode);
+
+    while(!nodeQ.empty) {
+        let currentNode = nodeQ.dequeue();
+
+        if (currentNode === endNode) {
+            break;
+        }
+
+        for (let edge of currentNode.edges) {
+            if (edge.node.parentNode != null || (validNode != null && !validNode(edge.node))) {
+                continue;
+            }
+
+            edge.node.parentNode = currentNode;
+            edge.node.parentEdge = edge;
+
+            nodeQ.enqueue(edge.node);
+        }
+    }
+
+    //The graph has the information
+    let solution = [];
+
+    if (endNode.parentNode == null) {
+        solution = null;
+    }
+    else {
+        let currentNode = endNode;
+
+        while(currentNode.parentNode !== -1) {
+            solution.push({
+                node: currentNode,
+                direction: currentNode.parentEdge.label
+            });
+
+            currentNode = currentNode.parentNode;
+        }
+    }
+
+    for (let node of graph.nodes) {
+        node.parentNode = null;
+        node.parentEdge = null;
+    }
+
+    return solution;
 }
 
 export class Graph {
     nodes = [];
-
-    //Default solver, replace for others
-    solver = (startNode, endNode) => {
-
-    };
 
     static fromMaze(maze) {
         const width = maze.size[0];
@@ -82,6 +177,7 @@ export class Graph {
         graph.nodes.forEach((node, index) => {
             node.properties = [];
 
+            //We use properties to show where the pieces are.
             if (index === pony) {
                 node.properties.push("pony");
             }
@@ -92,7 +188,7 @@ export class Graph {
                 node.properties.push("endPoint");
             }
 
-            //MAze specifies where WE DO NOT have a connection, so start by inserting all connections
+            //Maze served specifies where WE DO NOT have a connection, so start by inserting all connections
             if (graph.nodes[index - 1] != null) {
                 let west = {
                     label: "west",

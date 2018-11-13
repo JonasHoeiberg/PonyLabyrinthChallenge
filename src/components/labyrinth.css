@@ -35,3 +35,7 @@
 .MazeCell.End {
     background-color: green;
 }
+
+.MazeCell.Solution {
+    background-color: yellow;
+}

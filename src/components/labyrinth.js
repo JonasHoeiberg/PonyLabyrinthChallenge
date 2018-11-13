@@ -25,6 +25,9 @@ export class Labyrinth extends Component {
                 else if (node.properties.indexOf("domokun") !== -1) {
                     cellElements.push(this.renderDomokunCell(x, y, node));
                 }
+                else if (node.properties.indexOf("solution") !== -1) {
+                    cellElements.push(this.renderSolutionCell(x, y, node));
+                }
                 else {
                     cellElements.push(this.renderBasicCell(x, y, node));
                 }
@@ -45,6 +48,10 @@ export class Labyrinth extends Component {
 
     renderEndPointCell(x, y, node) {
         return this.renderBasicCell(x, y, node, "End");
+    }
+
+    renderSolutionCell(x, y, node) {
+        return this.renderBasicCell(x, y, node, "Solution");
     }
 
     renderBasicCell(x, y, node, additionalClasses) {
