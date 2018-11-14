@@ -1,6 +1,10 @@
 //React doesn't like kebaab case, and the API uses it, so I made this. Doesn't catch numbers and stuff in variable names, but doesn;t need to for now
 //No camels were hurt in the making of this function
-export function camelToKebab(object) {
+export function camelToKebab(object, recursive) {
+    if (recursive == null) {
+        recursive = false;
+    }
+
     let newObject = Object.keys(object).reduce((accObject, currentPropertyName) => {
         let words = currentPropertyName.match(/(^[^A-Z]+)|([A-Z][^A-Z]+)/g);
 
@@ -16,6 +20,14 @@ export function camelToKebab(object) {
 
         accObject[newPropertyName] = object[currentPropertyName];
 
+        if (
+            typeof accObject[newPropertyName] === "object"
+            && !Array.isArray(accObject[newPropertyName])
+            && recursive)
+        {
+            accObject[newPropertyName] = camelToKebab(accObject[newPropertyName]);
+        }
+
         return accObject;
     }, {});
 
@@ -24,7 +36,7 @@ export function camelToKebab(object) {
 }
 
 //Do NOT try this at home. Despite appearances, it's much harder to convert a kebab into a camel than the other way around
-export function kebabToCamel(object) {
+export function kebabToCamel(object, recursive) {
     let newObject = Object.keys(object).reduce((accObject, currentPropertyName) => {
         let words = currentPropertyName.match(/(^[^-]+)|(-[^-]+)/g);
 
@@ -39,6 +51,14 @@ export function kebabToCamel(object) {
         }, "");
 
         accObject[newPropertyName] = object[currentPropertyName];
+
+        if (
+            typeof accObject[newPropertyName] === "object"
+            && !Array.isArray(accObject[newPropertyName])
+            && recursive)
+        {
+            accObject[newPropertyName] = kebabToCamel(accObject[newPropertyName]);
+        }
 
         return accObject;
     }, {});
@@ -144,7 +164,7 @@ export function shortestPath(graph, startNode, endNode, validNode) {
         while(currentNode.parentNode !== -1) {
             solution.push({
                 node: currentNode,
-                direction: currentNode.parentEdge.label
+                edge: currentNode.parentEdge
             });
 
             currentNode = currentNode.parentNode;

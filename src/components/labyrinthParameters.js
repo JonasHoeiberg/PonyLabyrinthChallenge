@@ -18,6 +18,10 @@ export class LabyrinthParameters extends Component {
             let requestBody = camelToKebab(this.state);
             delete requestBody.maze_id;
 
+            //This is why we need abstractions for remote server requests!
+            requestBody["maze-height"] = parseInt(requestBody["maze-height"]);
+            requestBody["maze-width"] = parseInt(requestBody["maze-height"]);
+
             const createRequest = new Request(
                 "https://ponychallenge.trustpilot.com/pony-challenge/maze",
                 {

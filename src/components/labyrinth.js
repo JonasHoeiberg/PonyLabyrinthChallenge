@@ -25,7 +25,7 @@ export class Labyrinth extends Component {
                 else if (node.properties.indexOf("domokun") !== -1) {
                     cellElements.push(this.renderDomokunCell(x, y, node));
                 }
-                else if (node.properties.indexOf("solution") !== -1) {
+                else if (node.properties.indexOf("solution") !== -1 && this.props.showSolution) {
                     cellElements.push(this.renderSolutionCell(x, y, node));
                 }
                 else {
@@ -57,6 +57,8 @@ export class Labyrinth extends Component {
     renderBasicCell(x, y, node, additionalClasses) {
         let nodeWidth = this.cellWidth;
         let nodeHeight = this.cellWidth;
+        let nodeLeft = x*this.cellWidth;
+        let nodeTop = y*this.cellWidth;
 
         let classNames = [];
         node.edges.forEach(item => {
@@ -89,8 +91,8 @@ export class Labyrinth extends Component {
         let style = {
             width: nodeWidth.toString() + "px",
             height: nodeHeight.toString() + "px",
-            left: x*this.cellWidth.toString() + "px",
-            top: y*this.cellWidth.toString() + "px"
+            left: nodeLeft.toString() + "px",
+            top: nodeTop.toString() + "px"
         };
 
         if (additionalClasses != null) {
