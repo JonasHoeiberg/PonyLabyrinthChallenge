@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './labyrinth.css';
+import './maze.css';
 
 //TODO: Split Cells and their different types into separate components
-export class Labyrinth extends Component {
+export class Maze extends Component {
     cellWidth = 20;
 
     width = 10;
@@ -36,25 +36,28 @@ export class Labyrinth extends Component {
 
         return cellElements;
     }
-
-    //These are separate functions just to remind myself that someday they should be their own components.
+    
     renderPonyCell(x, y, node) {
-        return this.renderBasicCell(x, y, node, "Pony");
+        return this.renderBasicCell(x, y, node, "Pony", "P");
     }
 
     renderDomokunCell(x, y, node) {
-        return this.renderBasicCell(x, y, node, "Domokun");
+        return this.renderBasicCell(x, y, node, "Domokun", "D");
     }
 
     renderEndPointCell(x, y, node) {
-        return this.renderBasicCell(x, y, node, "End");
+        return this.renderBasicCell(x, y, node, "End", "E");
     }
 
     renderSolutionCell(x, y, node) {
         return this.renderBasicCell(x, y, node, "Solution");
     }
 
-    renderBasicCell(x, y, node, additionalClasses) {
+    renderBasicCell(x, y, node, additionalClasses, value) {
+        if (value == null) {
+            value = "";
+        }
+
         let nodeWidth = this.cellWidth;
         let nodeHeight = this.cellWidth;
         let nodeLeft = x*this.cellWidth;
@@ -99,7 +102,7 @@ export class Labyrinth extends Component {
             classes += " " + additionalClasses;
         }
 
-        return (<div className={classes} style={style}></div>)
+        return (<div className={classes} style={style}>{value}</div>)
     }
 
     getContainerStyle() {

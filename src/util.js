@@ -126,6 +126,7 @@ export function shortestPath(graph, startNode, endNode, validNode) {
         throw new Error("validNode must be null or a function");
     }
 
+    //start node can have no parents.
     startNode.parentNode = -1;
     startNode.parentEdge = -1;
 
@@ -133,6 +134,7 @@ export function shortestPath(graph, startNode, endNode, validNode) {
 
     nodeQ.enqueue(startNode);
 
+    //As longas there are items in the queue, and we haven't found our solution
     while(!nodeQ.empty) {
         let currentNode = nodeQ.dequeue();
 
@@ -155,6 +157,7 @@ export function shortestPath(graph, startNode, endNode, validNode) {
     //The graph has the information
     let solution = [];
 
+    //If the parentnode has not been colored, there is no solution
     if (endNode.parentNode == null) {
         solution = null;
     }

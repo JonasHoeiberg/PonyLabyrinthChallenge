@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import {LabyrinthParameters} from "./components/labyrinthParameters";
-import {Labyrinth} from "./components/labyrinth";
-import {LabyrinthControls} from "./components/labyrinthControls";
+import {MazeParameters} from "./components/mazeParameters";
+import {Maze} from "./components/maze";
+import {MazeControls} from "./components/mazeControls";
 import {kebabToCamel, Graph, shortestPath} from "./util";
 
 //This is sort of acting as the model/synchronizer/central piece. If this grows beyond a fun little experiment, proper MVC separation would be preferable.
@@ -17,8 +17,6 @@ class App extends Component {
         resultImage: null,
         solution: null
     };
-
-
 
     async fetchMaze(maze_id) {
         const mazeRequest = new Request(
@@ -88,7 +86,7 @@ class App extends Component {
             }
         }
         else {
-            this.makeMove(signal);
+            await this.makeMove(signal);
             this.fetchMaze(this.state.maze_id.toString());
         }
     }
@@ -113,7 +111,7 @@ class App extends Component {
     }
 
     generateSolution(graph) {
-        //Remove solution if any
+        //Remove solution property if any
         graph.nodes.forEach(node => node.properties.filter(x => x.solution !== "solution"));
 
         let solution = shortestPath(
@@ -124,6 +122,7 @@ class App extends Component {
         );
 
         if (solution != null) {
+            //Make solution start at pony.
             solution = solution.reverse();
 
             solution.forEach(item => {
@@ -143,6 +142,7 @@ class App extends Component {
     }
 
     render() {
+        //resultimage is set when the maze is no longer active
         if (this.state.resultImage !== null) {
             return (
                 <div className="App">
@@ -169,10 +169,10 @@ class App extends Component {
 
         return (
             <div className="App">
-                <header className="App-header">
-                    <LabyrinthParameters generateMaze={(maze_id) => this.fetchMaze(maze_id)} />
-                    <Labyrinth maze={this.state.labyrinthState} showSolution={this.state.showSolution} width={this.state.mazeWidth} height={this.state.mazeHeight} />
-                    <LabyrinthControls currentNode={currentNode} handleControl={(direction) => this.handleControl(direction)} solutionFound={this.state.solution != null} />
+                <header className="App-header AppContainer">
+                    <MazeParameters className="MazeElement" generateMaze={(maze_id) => this.fetchMaze(maze_id)} />
+                    <Maze className="MazeElement" maze={this.state.labyrinthState} showSolution={this.state.showSolution} width={this.state.mazeWidth} height={this.state.mazeHeight} />
+                    <MazeControls className="MazeElement" currentNode={currentNode} handleControl={(direction) => this.handleControl(direction)} solutionFound={this.state.solution != null} />
                 </header>
             </div>
         );

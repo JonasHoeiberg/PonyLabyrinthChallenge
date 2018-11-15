@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './labyrinthParameters.css';
+import './mazeParameters.css';
 import {camelToKebab} from "../util";
 
-export class LabyrinthParameters extends Component {
+export class MazeParameters extends Component {
     state = {
         mazePlayerName: "Twilight Sparkle",
         mazeWidth: 15,
@@ -62,9 +62,12 @@ export class LabyrinthParameters extends Component {
                     <input type="text" value={this.state.maze_id} onChange={e => this.setState({maze_id: e.target.value})}/>
                 </label>
                 OR<br/>
-                <select value={this.state.ponyName} onChange={e => this.setState({ponyName: e.target.value})}>
-                    {ponySelectors}
-                </select>
+                <label>
+                    Pony:
+                    <select value={this.state.ponyName} onChange={e => this.setState({ponyName: e.target.value})}>
+                        {ponySelectors}
+                    </select>
+                </label>
                 <label className="LabyrinthOptionRow">
                     Maze width:
                     <input type="number" min="15" max="25" value={this.state.mazeWidth} onChange={e => this.setState({mazeWidth: e.target.value})}/>
@@ -77,7 +80,7 @@ export class LabyrinthParameters extends Component {
                     Difficulty:
                     <input type="number" min="0" max="10" value={this.state.difficulty} onChange={e => this.setState({difficulty: parseInt(e.target.value)})}/>
                 </label>
-                <input type="button" value="Do it!" onClick={async () => {await this.getMazeId(); this.props.generateMaze(this.state.maze_id);}} />
+                <input type="button" value={(this.state.maze_id == null || this.state.maze_id === "") ? "Generate maze" : "Get maze"} onClick={async () => {await this.getMazeId(); this.props.generateMaze(this.state.maze_id);}} />
             </form>
         );
     };
