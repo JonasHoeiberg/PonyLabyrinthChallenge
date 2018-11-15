@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/PonyLabyrinthChallenge/precache-manifest.cb46cd857218d2e09dbaa2329b5c9546.js"
+  "/PonyLabyrinthChallenge/precache-manifest.a14996c3da3d23079ece0faa099e1321.js"
 );
 
 workbox.clientsClaim();
