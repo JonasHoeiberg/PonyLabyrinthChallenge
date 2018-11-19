@@ -12,6 +12,8 @@ Live version can be found [here](https://jonashoeiberg.github.io/PonyLabyrinthCh
 
 # Further work #
 If I were to  continue on this, these are the items I would probably look into
+* Implement unit and UI tests
+* Implement an algorithm that can handle the nondeterministic nature of the domokun and its movements
 * Abstract server communication out of the React components and into a dedicated interface of some kind
 * Improve the UX
 * Split things into more components
